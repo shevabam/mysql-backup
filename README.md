@@ -32,15 +32,18 @@ Then run `composer update`.
 
 ## Initialization
 
-	require 'vendor/autoload.php';
-	
-	use Phelium\Component\MySQLBackup;
+```php
+require 'vendor/autoload.php';
+
+use Phelium\Component\MySQLBackup;
+```
 	
 
 To initialize MySQLBackup, you must provide your database information :  
 
-	$Dump = new MySQLBackup('server name', 'user name', 'password', 'db name');
-
+```php
+$Dump = new MySQLBackup('server name', 'user name', 'password', 'db name');
+```
 
 ## Usage
 
@@ -48,98 +51,118 @@ To initialize MySQLBackup, you must provide your database information :
 
 By default, all tables are saved. If you want to save one or more tables, the functions `addTable` or `addTables` must be used:
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->addTable('posts'); // Add the posts table
-	$Dump->addTables(array('users', 'comments')); // Add the users and comments tables
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->addTable('posts'); // Add the posts table
+$Dump->addTables(array('users', 'comments')); // Add the users and comments tables
+```
 
 
 ### Set the filename
 
 By default, the name of the generated file is "dump\_{database name}\_{date}". With `setFilename` method, you can specify a different file name:
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->setFilename('bkp_'.time());
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->setFilename('bkp_'.time());
+```
 
 
 ### Do not dump the table schema or the datas
 
 By default, the table schema (structure) and datas of each table are saved. However, it's possible not to save one or the other with `setDumpStructure` and `setDumpDatas` (default : true) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->setDumpStructure(false); // Not the structure
-	$Dump->setDumpDatas(false); // Not the datas
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->setDumpStructure(false); // Not the structure
+$Dump->setDumpDatas(false); // Not the datas
+```
 
 
 ### Do not add DROP TABLE
 
 By default, the *DROP TABLE IF EXISTS* directive is added before each CREATE TABLE. You can disable it with `addDropTable` (default : true) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->addDropTable(false); // Not add the DROP TABLE IF EXISTS statment
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->addDropTable(false); // Not add the DROP TABLE IF EXISTS statment
+```
 
 
 ### Do not add NOT EXISTS
 
 By default, the *IF NOT EXISTS* directive is added during a CREATE TABLE. You can disable it with `addIfNotExists` (default : true) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->addIfNotExists(false); // Not add the IF NOT EXISTS statment
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->addIfNotExists(false); // Not add the IF NOT EXISTS statment
+```
 
 
 ### Compress file
 
 To compress the output file, `setCompress` allows to use ZIP or GZIP (default : no compression) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->setCompress('zip'); // zip | gz | gzip
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->setCompress('zip'); // zip | gz | gzip
+```
 
 
 ### Delete file
 
 The generated file can be deleted automatically with `setDelete` (default : false) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->setDelete(true);
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->setDelete(true);
+```
 
 
 ### Auto download
 
 To download automatically the generated file, use `setDownload` (default : false) :
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->setDownload(true); // starts downloading
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->setDownload(true); // starts downloading
+```
 
 
 ### Execute the backup
 
 To start backing up your database, use `dump`:
 
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->dump();
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->dump();
+```
 
 
 # Full example
 
 Here is an example to backup the *blog* database. Only the tables *posts*, *comments* and *users* are kept. Then compressed in ZIP format. The generated file is deleted from the server and the download starts automatically:
 
-	<?php
-	require 'vendor/autoload.php';
-	    
-	use Phelium\Component\MySQLBackup;
-	
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump->addTables(array('posts', 'comments', 'users'));
-	$Dump->setCompress('zip');
-	$Dump->setDelete(true);
-	$Dump->setDownload(true);
-	$Dump->dump();
-	
-	// or
-	
-	$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
-	$Dump
-	    ->addTables(array('posts', 'comment', 'users'));
-	    ->setCompress('zip');
-	    ->setDelete(true);
-	    ->setDownload(true);
-	    ->dump();
+```php
+<?php
+require 'vendor/autoload.php';
+    
+use Phelium\Component\MySQLBackup;
+
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->addTables(array('posts', 'comments', 'users'));
+$Dump->setCompress('zip');
+$Dump->setDelete(true);
+$Dump->setDownload(true);
+$Dump->dump();
+
+// or
+
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump
+    ->addTables(array('posts', 'comment', 'users'));
+    ->setCompress('zip');
+    ->setDelete(true);
+    ->setDownload(true);
+    ->dump();
+```
