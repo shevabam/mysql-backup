@@ -89,7 +89,7 @@ $Dump->addDropTable(false); // Not add the DROP TABLE IF EXISTS statment
 ```
 
 
-### Do not add NOT EXISTS
+### Do not add IF NOT EXISTS
 
 By default, the *IF NOT EXISTS* directive is added during a CREATE TABLE. You can disable it with `addIfNotExists` (default : true) :
 
