@@ -3,9 +3,11 @@
 - [Installation](#installation)
 - [Initialization](#initialization)
 - [Usage](#usage)
-	- [Add tables](#add-tables)
+    - [Add tables](#add-tables)
+	- [Exclude tables](#exclude-tables)
 	- [Set the filename](#set-the-filename)
 	- [Do not dump the table schema or the datas](#do-not-dump-the-table-schema-or-the-datas)
+    - [Do not add CREATE DATABASE IF NOT EXISTS](#do-not-add-create-database-if-not-exists)
 	- [Do not add DROP TABLE](#do-not-add-drop-table)
 	- [Do not add IF NOT EXISTS](#do-not-add-if-not-exists)
 	- [Compress file](#compress-file)
@@ -42,8 +44,11 @@ use Phelium\Component\MySQLBackup;
 To initialize MySQLBackup, you must provide your database information :  
 
 ```php
-$Dump = new MySQLBackup('server name', 'user name', 'password', 'db name');
+$Dump = new MySQLBackup('server name', 'user name', 'password', 'db name', 'mysql port');
 ```
+
+MySQL port default is 3306.
+
 
 ## Usage
 
@@ -56,6 +61,17 @@ $Dump = new MySQLBackup('localhost', 'root', '', 'blog');
 $Dump->addTable('posts'); // Add the posts table
 $Dump->addTables(array('users', 'comments')); // Add the users and comments tables
 ```
+
+
+### Exclude tables
+
+You can exclude some tables of the backup. Use `excludeTables` function. The parameter must be an array containing tables name to exclude.
+
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->excludeTables(array(comments')); // Exclude comments table to the backup
+```
+
 
 
 ### Set the filename
@@ -76,6 +92,16 @@ By default, the table schema (structure) and datas of each table are saved. Howe
 $Dump = new MySQLBackup('localhost', 'root', '', 'blog');
 $Dump->setDumpStructure(false); // Not the structure
 $Dump->setDumpDatas(false); // Not the datas
+```
+
+
+### Do not add CREATE DATABASE IF NOT EXISTS
+
+By default, the *CREATE DATABASE IF NOT EXISTS* directive is added in top of the backup file. You can disable it with `addCreateDatabaseIfNotExists` (default : true) :
+
+```php
+$Dump = new MySQLBackup('localhost', 'root', '', 'blog');
+$Dump->addCreateDatabaseIfNotExists(false); // Not add the CREATE DATABASE IF NOT EXISTS statment
 ```
 
 

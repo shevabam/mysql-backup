@@ -20,6 +20,7 @@ class MySQLBackup
      */
     public $db = array(
         'host'      => null,
+        'port'      => null,
         'user'      => null,
         'password'  => null,
         'name'      => null,
@@ -38,6 +39,13 @@ class MySQLBackup
      * @var array
      */
     public $tables = array();
+
+    /**
+     * Excluded tables list
+     *
+     * @var array
+     */
+    public $excludedTables = array();
 
     /**
      * Filename
@@ -109,6 +117,13 @@ class MySQLBackup
      */
     public $addIfNotExists = true;
 
+    /**
+     * Add CREATE DATABASE IF NOT EXISTS ?
+     *
+     * @var boolean
+     */
+    public $addCreateDatabaseIfNotExists = true;
+
 
 
 
@@ -120,10 +135,11 @@ class MySQLBackup
      * @param string $password Password
      * @param string $db       DB name
      */
-    public function __construct($host, $user, $password, $db)
+    public function __construct($host, $user, $password, $db, $port = 3306)
     {
         $this->db = array(
             'host'      => $host,
+            'port'      => $port,
             'user'      => $user,
             'password'  => $password,
             'name'      => $db,
@@ -141,7 +157,7 @@ class MySQLBackup
      */
     private function databaseConnect()
     {
-        $dsn = 'mysql:host='.$this->db['host'].';dbname='.$this->db['name'];
+        $dsn = 'mysql:host='.$this->db['host'].';port='.$this->db['port'].';dbname='.$this->db['name'];
 
         $options = array(
             \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
@@ -293,6 +309,20 @@ class MySQLBackup
     
     
     /**
+     * Add "CREATE DATABASE IF NOT EXISTS" (default : true)
+     * 
+     * @param  bool   $p          Add CREATE DATABASE IF NOT EXISTS or not
+     * @return object MySQLBackup
+     */
+    public function addCreateDatabaseIfNotExists($p)
+    {
+        $this->addCreateDatabaseIfNotExists = $p;
+
+        return $this;
+    }
+    
+    
+    /**
      * Add table name to dump
      *
      * @param  string $table      Table name to dump
@@ -344,6 +374,21 @@ class MySQLBackup
         return $this;
     }
 
+    /**
+     * Exclude tables
+     * 
+     * @return object MySQLBackup
+     */
+    public function excludeTables(array $tables)
+    {
+        if (is_array($tables) && count($tables) > 0)
+        {
+            $this->excludedTables = $tables;
+        }
+
+        return $this;
+    }
+
 
     /**
      * Dump SQL database with selected tables
@@ -363,9 +408,20 @@ class MySQLBackup
         
         $return .= "SET FOREIGN_KEY_CHECKS=0;";
         $return .= "\n\n\n";
+
+        if ($this->addCreateDatabaseIfNotExists === true)
+        {
+            $return .= "CREATE DATABASE IF NOT EXISTS `".$this->db['name']."`;\n";
+            $return .= "USE `".$this->db['name']."`;";
+            $return .= "\n\n\n";
+        }
         
         foreach ($this->tables as $table)
         {
+            // We skip excluded tables
+            if (in_array($table, $this->excludedTables))
+                continue;
+
             $stmt = $this->dbh->query('SELECT * FROM `'.$table.'`');
             $stmt->execute();
             $num_fields = $stmt->columnCount();
