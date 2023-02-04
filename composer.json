@@ -2,7 +2,7 @@
     "name": "phelium/mysql-backup",
     "description": "Backup easily your MySQL database !",
     "keywords": ["mysql", "backup", "dump", "database"],
-    "version": "1.0.0",
+    "version": "1.1.0",
     "license": "GPL-2.0-only",
     "homepage": "https://github.com/shevabam/mysql-backup",
     "support": {
