@@ -471,7 +471,13 @@ class MySQLBackup
                         }
                         else
                         {
-                            $return .= '""';
+                            if($row[$i] === NULL)
+                            {
+                                $return .= 'NULL';
+                            }
+                            else {
+                                $return .= '""';
+                            }
                         }
                         
                         if ($i < ($num_fields-1))
